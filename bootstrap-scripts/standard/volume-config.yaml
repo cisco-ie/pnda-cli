@@ -1,34 +1,39 @@
 classes:
   datanode:
     volumes:
-      - /data0 xfs
-      - /var/log/pnda xfs
+      - /dev/vdb1 /var/log/pnda xfs
+      - /dev/vdb2 /data0 xfs
+    partitions:
+      - /dev/vdb msdos /dev/vdb1 0GB 120GB
+      - /dev/vdb msdos /dev/vdb2 120GB 100%
 
-  no_additonal_volumes:
+  no_additional_volumes:
 
   generic:
     volumes:
-      - /var/log/pnda xfs
+      - /dev/vdb1 /var/log/pnda xfs
+    partitions:
+      - /dev/vdb msdos /dev/vdb1 0GB 120GB
 
 instances:
-  hadoop-dn: datanode
-  bastion: no_additonal_volumes
-  jupyter: generic
-  saltmaster: no_additonal_volumes
-  tools: no_additonal_volumes
-  kafka: generic
-  logserver: generic
-  zk: generic
-  opentsdb: generic
-  hadoop-edge: generic
-  hadoop-cm: generic
-  hadoop-mgr-1: generic
-  hadoop-mgr-2: generic
-  hadoop-mgr-3: generic
-  hadoop-mgr-4: generic
-  elk-es-master: generic
-  elk-es-ingest: generic
-  elk-es-data: generic
-  elk-es-coordinator: generic
-  elk-es-multi: generic
-  elk-es-logstash: generic
+  hadoop-dn: no_additional_volumes
+  bastion: no_additional_volumes
+  jupyter: no_additional_volumes
+  saltmaster: no_additional_volumes
+  tools: no_additional_volumes
+  kafka: no_additional_volumes
+  logserver: no_additional_volumes
+  zk: no_additional_volumes
+  opentsdb: no_additional_volumes
+  hadoop-edge: no_additional_volumes
+  hadoop-cm: no_additional_volumes
+  hadoop-mgr-1: no_additional_volumes
+  hadoop-mgr-2: no_additional_volumes
+  hadoop-mgr-3: no_additional_volumes
+  hadoop-mgr-4: no_additional_volumes
+  elk-es-master: no_additional_volumes
+  elk-es-ingest: no_additional_volumes
+  elk-es-data: no_additional_volumes
+  elk-es-coordinator: no_additional_volumes
+  elk-es-multi: no_additional_volumes
+  elk-es-logstash: no_additional_volumes

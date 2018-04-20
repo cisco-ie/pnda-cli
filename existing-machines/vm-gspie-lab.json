@@ -1,0 +1,74 @@
+{
+    "bastion": {
+        "ip_address": "172.31.96.220",
+        "node_type": "bastion",
+        "public_ip_address": "10.200.96.220",
+        "is_bastion": true
+    },
+    "hadoop-cm": {
+        "ip_address": "172.31.96.221",
+        "node_type": "hadoop-cm"
+    },
+    "hadoop-mgr-1": {
+        "ip_address": "172.31.96.222",
+        "node_type": "hadoop-mgr-1"
+    },
+    "hadoop-mgr-2": {
+        "ip_address": "172.31.96.223",
+        "node_type": "hadoop-mgr-2"
+    },
+    "hadoop-mgr-3": {
+        "ip_address": "172.31.96.224",
+        "node_type": "hadoop-mgr-3"
+    },
+    "hadoop-mgr-4": {
+        "ip_address": "172.31.96.225",
+        "node_type": "hadoop-mgr-4"
+    },
+    "hadoop-dn-0": {
+        "ip_address": "172.31.96.226",
+        "node_type": "hadoop-dn"
+    },
+    "hadoop-dn-1": {
+        "ip_address": "172.31.96.227",
+        "node_type": "hadoop-dn"
+    },
+    "hadoop-dn-2": {
+        "ip_address": "172.31.96.228",
+        "node_type": "hadoop-dn"
+    },
+    "opentsdb-0": {
+        "ip_address": "172.31.96.229",
+        "node_type": "opentsdb"
+    },
+    "logserver": {
+        "ip_address": "172.31.96.230",
+        "node_type": "logserver"
+    },
+    "zk-0": {
+        "ip_address": "172.31.96.231",
+        "node_type": "zk"
+    },
+    "kafka-0": {
+        "ip_address": "172.31.96.232",
+        "node_type": "kafka"
+    },
+    "saltmaster": {
+        "ip_address": "172.31.96.233",
+        "node_type": "saltmaster",
+        "is_saltmaster": true        
+    },
+    "jupyter": {
+        "ip_address": "172.31.96.234",
+        "node_type": "jupyter"
+    },
+    "tools": {
+        "ip_address": "172.31.96.235",
+        "node_type": "tools"
+    },
+    "hadoop-edge": {
+        "ip_address": "172.31.96.239",
+        "node_type": "hadoop-edge",
+        "is_console": true
+    }
+}

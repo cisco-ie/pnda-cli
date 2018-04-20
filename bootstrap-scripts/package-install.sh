@@ -5,6 +5,11 @@ set -ex
 if [ "x$REJECT_OUTBOUND" == "xYES" ]; then
 PNDA_MIRROR_IP=$(echo $PNDA_MIRROR | awk -F'[/:]' '/http:\/\//{print $4}')
 
+OS_RELEASE=$(lsb_release -sc)
+OS_VERSION=$(lsb_release -sr)
+OS_ID=$(lsb_release -si)
+OS_SHORT=${OS_ID,,}${OS_VERSION%.*}
+
 # Log the global scope IP connection.
 cat > /etc/rsyslog.d/10-iptables.conf <<EOF
 :msg,contains,"[ipreject] " /var/log/iptables.log
@@ -16,6 +21,16 @@ iptables -F OUTPUT | true
 iptables -X LOGGING | true
 iptables -N LOGGING
 iptables -A OUTPUT -j LOGGING
+## Allow access to proxies - proxy.esl.cisco.com
+iptables -A LOGGING -d 173.36.224.109/32 -j ACCEPT
+iptables -A LOGGING -d 173.36.224.108/32 -j ACCEPT
+iptables -A LOGGING -d 64.102.255.40/32 -j ACCEPT
+## Allow ssh from any host
+iptables -A INPUT -i ens+ -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A LOGGING -o ens+ -p tcp -m tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+## Allow http from any host
+iptables -A INPUT -i ens+ -p tcp -m tcp --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A LOGGING -o ens+ -p tcp -m tcp --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 ## Accept all local scope IP packets.
   ip address show  | awk '/inet /{print $2}' | while IFS= read line; do \
 iptables -A LOGGING -d  $line -j ACCEPT
@@ -48,9 +63,9 @@ if [ "x$ADD_ONLINE_REPOS" == "xYES" ]; then
   # Give local mirror priority
   sed -i "1ideb $PNDA_MIRROR/mirror_deb/ ./" /etc/apt/sources.list
 
-  (curl -L 'https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key' | apt-key add - ) && echo 'deb [arch=amd64] https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/ trusty-cm5.9.0 contrib' > /etc/apt/sources.list.d/cloudera-manager.list
-  (curl -L 'https://repo.saltstack.com/apt/ubuntu/14.04/amd64/archive/2015.8.11/SALTSTACK-GPG-KEY.pub' | apt-key add - ) && echo 'deb [arch=amd64] https://repo.saltstack.com/apt/ubuntu/14.04/amd64/archive/2015.8.11/ trusty main' > /etc/apt/sources.list.d/saltstack.list
-  (curl -L 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key' | apt-key add - ) && echo 'deb [arch=amd64] https://deb.nodesource.com/node_6.x trusty main' > /etc/apt/sources.list.d/nodesource.list
+  (curl -L "https://archive.cloudera.com/cm5/ubuntu/${OS_RELEASE}/amd64/cm/archive.key" | apt-key add - ) && echo "deb [arch=amd64] https://archive.cloudera.com/cm5/ubuntu/${OS_RELEASE}/amd64/cm/ ${OS_RELEASE}-cm5.12.1 contrib" > /etc/apt/sources.list.d/cloudera-manager.list
+  (curl -L "https://repo.saltstack.com/apt/ubuntu/${OS_VERSION}/amd64/archive/2015.8.11/SALTSTACK-GPG-KEY.pub" | apt-key add - ) && echo "deb [arch=amd64] https://repo.saltstack.com/apt/ubuntu/${OS_VERSION}/amd64/archive/2015.8.11/ ${OS_RELEASE} main" > /etc/apt/sources.list.d/saltstack.list
+  (curl -L "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" | apt-key add - ) && echo "deb [arch=amd64] https://deb.nodesource.com/node_6.x ${OS_RELEASE} main" > /etc/apt/sources.list.d/nodesource.list
 else
   mv /etc/apt/sources.list /etc/apt/sources.list.backup
   echo -e "deb $PNDA_MIRROR/mirror_deb/ ./" > /etc/apt/sources.list

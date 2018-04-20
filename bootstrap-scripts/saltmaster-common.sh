@@ -9,12 +9,17 @@ set -ex
 
 DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 
+OS_RELEASE=$(lsb_release -sc)
+OS_VERSION=$(lsb_release -sr)
+OS_ID=$(lsb_release -si)
+OS_SHORT=${OS_ID,,}${OS_VERSION%.*}
+
 # Install a saltmaster, plus saltmaster config
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get -y install unzip salt-master=2015.8.11+ds-1 git
-HDP_OS=ubuntu14
+HDP_OS=${OS_SHORT}
 fi
 
 if [ "x$DISTRO" == "xrhel"  -o "x$DISTRO" == "xcentos" ]; then
@@ -137,6 +142,11 @@ aws.archive_secret: '$PNDA_ARCHIVE_SECRET_ACCESS_KEY'
 pnda.archive_container: '$PNDA_ARCHIVE_CONTAINER'
 pnda.archive_type: 's3a'
 pnda.archive_service: ''
+http_proxy: proxy.esl.cisco.com:8080
+https_proxy: proxy.esl.cisco.com:8080
+ftp_proxy: proxy.esl.cisco.com:8080
+all_proxy: proxy.esl.cisco.com:8080
+no_proxy: localhost,127.0.0.1,.cisco.com,.gspie.lab,10.200.96.74,darthmaul,mothra
 
 pnda_mirror:
   base_url: '$PNDA_MIRROR'
